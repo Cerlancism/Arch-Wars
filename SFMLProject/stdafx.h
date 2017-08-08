@@ -12,6 +12,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+#include "TextureHolder.h"
+
 using namespace sf;
 using namespace std;
 
