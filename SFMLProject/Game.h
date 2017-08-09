@@ -9,7 +9,6 @@ class Game
 {
 private:
 	int sizeX, sizeY;
-	bool paused = false;
 	int colorFade = 0;
 	bool fadein = false;
 
@@ -54,8 +53,11 @@ private:
 	Text gameOverText;
 	Text pauseText;
 	Text levelupText;
-	Text AmmoText;
+	Text ammoText;
 	Text scoreText;
+	Text healthText;
+	SoundBuffer uiSFX;
+	Sound uiSound;
 
 	//Gameworld
 	IntRect arena;
@@ -63,6 +65,7 @@ private:
 
 	//Gameplay
 	int wave = 0;
+	int score = 0;
 	Player player;
 	//Arrows
 	Arrow arrows[ALLARROWS];
@@ -75,7 +78,7 @@ private:
 	int enemiesAliveCount;
 	Enemy *Enemies = NULL;
 	//Pickup
-	PickUp pickups[10];
+	vector<PickUp> pickups;
 	int currentPickup = 0;
 
 
@@ -98,6 +101,10 @@ private:
 	int createBackground(VertexArray & rVA, IntRect arena);
 
 	void LoadMenu();
+
+	void LoadGameOver();
+
+	void LoadLevelUp();
 
 	void WaveUp();
 

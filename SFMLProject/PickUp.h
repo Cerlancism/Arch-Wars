@@ -7,8 +7,8 @@ public:
 	enum class Type { Health, Arrow };
 
 private:
-	const int HEALTHVALUE = 50;
-	const int ARROWVALUE = 12;
+	const int HEALTHVALUE = 10;
+	const int ARROWVALUE = 100;
 
 	// The arena it exists in
 	IntRect m_Arena;
@@ -17,6 +17,7 @@ private:
 	bool m_Spawned = false;
 	static float time;
 	Type m_Type;
+	SoundBuffer pickupSFX;
 
 public:
 	int Value;
@@ -32,5 +33,6 @@ public:
 	int gotIt();
 	bool IsSpawned();
 	static bool RandownSpawn();
+	void PlayPickupSFX();
 };
 

@@ -12,7 +12,9 @@ private:
 	// How big is each tile of the arena
 	int m_TileSize;
 
-	float health;
+	float health = 100;
+	float maxHealth = 100;
+	float DEFAULTHEALTH = 100;
 
 public:
 	SoundBuffer shootSFX;
@@ -21,6 +23,12 @@ public:
 	~Player();
 
 	void Update() override;
+
+	void UpgradeSpeed();
+
+	void UpgradeHealth();
+
+	void Reset();
 
 	bool SetHealth(float hp);
 	float GetHealth();
@@ -31,5 +39,6 @@ public:
 	void MoveUp();
 	void MoveDown();
 	void Turn();
+	void PlayShoot();
 };
 

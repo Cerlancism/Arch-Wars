@@ -11,6 +11,7 @@ PickUp::PickUp()
 	SpriteSource.setOrigin(Vector2f(SpriteSource.getLocalBounds().width / 2.0f, SpriteSource.getLocalBounds().height / 2.0f));
 	Collider.Bounds = SpriteSource.getGlobalBounds();
 	Collider.Bounds.height = Collider.Bounds.width;
+	pickupSFX.loadFromFile("sound/pickup.wav");
 }
 
 PickUp::PickUp(Type type)
@@ -45,7 +46,7 @@ PickUp::PickUp(Type type, int value)
 	default:
 		break;
 	}
-	m_Value = ARROWVALUE;
+	m_Value = value;
 }
 
 PickUp::~PickUp()
@@ -62,7 +63,7 @@ PickUp::Type PickUp::GetType()
 }
 
 void PickUp::setArena(IntRect arena)
-{// Copy the details of the arena to the pickup's m_Arena
+{
 	//We trim the corner to prevent spawning at he border wall
 	m_Arena.left = arena.left - 100;
 	m_Arena.width = arena.width - 100;
@@ -118,6 +119,7 @@ void PickUp::spawn(Vector2f pos)
 
 int PickUp::gotIt()
 {
+	PlayPickupSFX();
 	m_Spawned = false;
 	return m_Value;
 }
@@ -145,4 +147,10 @@ bool PickUp::RandownSpawn()
 		newSec = false;
 	}
 	return false;
+}
+
+void PickUp::PlayPickupSFX()
+{
+	SoundPlayer.setBuffer(pickupSFX);
+	SoundPlayer.play();
 }

@@ -1,5 +1,10 @@
-﻿  Player.cpp
-d:\s_che\documents\acadmic sp\gprg\arch-wars\sfmlproject\player.cpp(38): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-d:\s_che\documents\acadmic sp\gprg\arch-wars\sfmlproject\player.cpp(83): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+﻿  Main.cpp
+d:\s_che\documents\acadmic sp\gprg\arch-wars\sfmlproject\main.cpp(36): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+d:\s_che\documents\acadmic sp\gprg\arch-wars\sfmlproject\main.cpp(37): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+d:\s_che\documents\acadmic sp\gprg\arch-wars\sfmlproject\main.cpp(38): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+d:\s_che\documents\acadmic sp\gprg\arch-wars\sfmlproject\main.cpp(45): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+d:\s_che\documents\acadmic sp\gprg\arch-wars\sfmlproject\main.cpp(46): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+d:\s_che\documents\acadmic sp\gprg\arch-wars\sfmlproject\main.cpp(47): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+d:\s_che\documents\acadmic sp\gprg\arch-wars\sfmlproject\main.cpp(53): warning C4553: '==': operator has no effect; did you intend '='?
   SFMLProject.vcxproj -> D:\s_che\Documents\Acadmic SP\GPRG\Arch-Wars\x64\Debug\Arch Wars.exe
   SFMLProject.vcxproj -> D:\s_che\Documents\Acadmic SP\GPRG\Arch-Wars\x64\Debug\Arch Wars.pdb (Partial PDB)

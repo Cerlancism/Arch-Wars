@@ -23,6 +23,7 @@ private:
 	float m_MinY;
 
 	static float lastShoot;
+	static float DEFAULTRATE;
 
 public:
 	static float Cooldown;
@@ -36,7 +37,8 @@ public:
 
 	//check for cooldown
 	static bool IsCooledDown();
-
+	static void UpgradeRate();
+	static void Reset();
 	void Shoot(float startX, float startY, float targetX, float targetY);
 
 	void Update() override;

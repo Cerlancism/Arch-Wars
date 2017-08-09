@@ -3,6 +3,7 @@
 #include "Game.h"
 
 float Arrow::lastShoot = 0;
+float Arrow::DEFAULTRATE = 0.33f;
 float Arrow::Cooldown = 0.33f;
 
 Arrow::Arrow()
@@ -37,6 +38,16 @@ bool Arrow::IsCooledDown()
 	{
 		return false;
 	}
+}
+
+void Arrow::UpgradeRate()
+{
+	Cooldown = Cooldown * 0.8f;
+}
+
+void Arrow::Reset()
+{
+	Cooldown = DEFAULTRATE;
 }
 
 void Arrow::Shoot(float startX, float startY, float targetX, float targetY)

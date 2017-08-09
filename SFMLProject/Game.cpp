@@ -34,6 +34,44 @@ Game::Game(int sizeX, int sizeY, String title, Uint32 style, Uint32 framerate, U
 	menuText.setPosition(0, sizeY/2);
 	menuText.setString("Press Enter to Play...");
 
+	pauseText.setFont(font);
+	pauseText.setCharacterSize(125);
+	pauseText.setFillColor(Color::White);
+	pauseText.setPosition(0, sizeY / 2);
+	pauseText.setString("Paused\nPress Enter to Resume...");
+
+	levelupText.setFont(font);
+	levelupText.setCharacterSize(100);
+	levelupText.setFillColor(Color::White);
+	levelupText.setPosition(0, 0);
+	stringstream levelUpStream;
+	levelUpStream <<
+		"1- Increase rate of fire\n" <<
+		"2- Increase max health\n" <<
+		"3- Increase run speed\n";
+	levelupText.setString(levelUpStream.str());
+
+	gameOverText.setFont(font);
+	gameOverText.setCharacterSize(125);
+	gameOverText.setFillColor(Color::White);
+	gameOverText.setPosition(0, sizeY / 3);
+	gameOverText.setString("You Died! \nPress Enter to Restart...");
+
+	ammoText.setFont(font);
+	ammoText.setCharacterSize(50);
+	ammoText.setFillColor(Color::White);
+	ammoText.setPosition(0, 100);
+
+	scoreText.setFont(font);
+	scoreText.setCharacterSize(50);
+	scoreText.setFillColor(Color::White);
+	scoreText.setPosition(0, 50);
+
+	healthText.setFont(font);
+	healthText.setCharacterSize(50);
+	healthText.setFillColor(Color::White);
+	healthText.setPosition(0, 0);
+
 	//Load game assets
 	tileBackground = TextureHolder::GetTexture("graphics/background_sheet.png");
 	crosshairTexture = TextureHolder::GetTexture("graphics/crosshair.png");
@@ -77,20 +115,52 @@ void Game::processEvents()
 		// Start the game
 		if (Keyboard::isKeyPressed(Keyboard::Return))
 		{
-			if (state == State::MENU )
+			if (state == State::MENU || state == State::GAME_OVER)
 			{
 				WaveUp();
 				state = State::PLAYING;
 				Debug::Log("Loaded Playing");
 			}
 		}
-		if (event.type == Event::KeyReleased && !paused)
+		if (event.type == Event::KeyReleased)
 		{
 			if (event.key.code == Keyboard::Return)
 			{
 				if (state == State::SPLASH)
 				{
 					LoadMenu();
+				}
+			}
+			if (state == State::PLAYING)
+			{
+				// Reloading
+				if (event.key.code == Keyboard::R)
+				{
+					if (arrowsSpare >= quiverSize)
+					{
+						// Plenty of bullets. Reload.
+						arrowsInQuiver = quiverSize;
+						arrowsSpare -= quiverSize;
+					}
+					else if (arrowsSpare > 0)
+					{
+						// Only few bullets left
+						arrowsInQuiver = arrowsSpare;
+						arrowsSpare = 0;
+					}
+					Debug::Log(to_string(arrowsSpare));
+				}
+				if (event.key.code == (Keyboard::Space))
+				{
+					state = State::PAUSED;
+					continue;
+				}
+			}
+			if (state == State::PAUSED)
+			{
+				if (event.key.code == (Keyboard::Space))
+				{
+					state = State::PLAYING;
 				}
 			}
 		}
@@ -132,9 +202,39 @@ void Game::processEvents()
 					* 180 + 270) / 3.141;
 				arrows[currentArrow].SpriteSource.setRotation(angle);
 				currentArrow = (currentArrow + 1 == ALLARROWS) ? 0 : currentArrow + 1;
+				arrowsInQuiver--;
+				player.PlayShoot();
 			}
 		}// End fire a bullet
+	}
 
+	if (state == State::LEVELING_UP)
+	{
+		// Handle the player levelling up
+		// Handle the player levelling up
+		if (event.key.code == Keyboard::Num1)
+		{
+			// Increase fire rate
+			Arrow::UpgradeRate();
+			WaveUp();
+			state = State::PLAYING;
+		}
+
+		if (event.key.code == Keyboard::Num2)
+		{
+			// Increase max hp
+			player.UpgradeHealth();
+			WaveUp();
+			state = State::PLAYING;
+		}
+
+		if (event.key.code == Keyboard::Num3)
+		{
+			// Increase run speed
+			player.UpgradeSpeed();
+			WaveUp();
+			state = State::PLAYING;
+		}
 	}
 }
 
@@ -146,6 +246,11 @@ void Game::update()
 	Time dt = clock.restart();
 	gameTimeTotal += dt;
 	deltaTime = dt.asSeconds();
+
+	stringstream ssAmmo;
+	stringstream ssScore;
+	stringstream ssHealth;
+
 	switch (state)
 	{
 	case Game::State::SPLASH:
@@ -215,22 +320,25 @@ void Game::update()
 						if (Enemies[i].Collider.Bounds.intersects(arrow.Collider.Bounds))
 						{
 							arrow.Stop();
+							score++;
 							if (Enemies[i].hit())
 							{
+								
 								enemiesAliveCount--;
 								//33% chance spawning drops
 								if (rand() % 3 == 0)
 								{
-									Debug::Log(to_string(rand() % 2));
 									PickUp::Type type = (rand() % 2 == 0) ? PickUp::Type::Arrow : PickUp::Type::Health;
+									pickups.push_back(PickUp(type));
 									pickups[currentPickup].SetType(type);
 									pickups[currentPickup].setArena(arena);
 									pickups[currentPickup].spawn(Enemies[i].GetPosition()- Enemies[i].SpriteSource.getOrigin());
-									currentPickup = (currentPickup + 1 >= enemiesCount) ? 0 : currentPickup + 1;
+									currentPickup = (currentPickup + 2 >= enemiesCount) ? 0 : (currentPickup + 1);
+									Debug::Log(to_string(currentPickup));
 								}
 								if (enemiesAliveCount == 0)
 								{
-									state = State::LEVELING_UP;
+									LoadLevelUp();
 								}
 							}
 						}
@@ -238,32 +346,52 @@ void Game::update()
 				}
 			}
 		}
-		for each (PickUp &pickup in pickups)
+		for (int i = 0; i < pickups.size(); i++)
 		{
-			if (player.Collider.Bounds.intersects(pickup.Collider.Bounds))
+			if (player.Collider.Bounds.intersects(pickups[i].Collider.Bounds) && pickups[i].IsSpawned())
 			{
-				PickUp::Type type = pickup.GetType();
+				PickUp::Type type = pickups[i].GetType();
 				switch (type)
 				{
 				case PickUp::Type::Health:
-					pickup.gotIt();
+					player.SetHealth(pickups[i].gotIt());
 					break;
 				case PickUp::Type::Arrow:
-					pickup.gotIt();
+					arrowsSpare += pickups[i].gotIt();
 					break;
 				default:
 					break;
 				}
 			}
 		}
+		for (int i = 0; i < enemiesCount; i++)
+		{
+			if (Enemies[i].isAlive() && Enemies[i].Collider.Bounds.intersects(player.Collider.Bounds))
+			{
+				if (player.SetHealth(-5 * deltaTime))
+				{
+					LoadGameOver();
+				}
+			}
+
+		}
 		if (PickUp::RandownSpawn())
 		{
 			PickUp::Type type = (rand() % 2 == 0) ? PickUp::Type::Arrow : PickUp::Type::Health;
+			pickups.push_back(PickUp(type));
 			pickups[currentPickup].SetType(type);
 			pickups[currentPickup].setArena(arena);
 			pickups[currentPickup].spawn();
 			currentPickup = (currentPickup + 1 >= enemiesCount) ? 0 : currentPickup + 1;
+			Debug::Log(to_string(currentPickup));
 		}
+
+		ssAmmo << arrowsInQuiver << '/' << arrowsSpare;
+		ammoText.setString(ssAmmo.str());
+		ssScore << "Score: " << score;
+		scoreText.setString(ssScore.str());
+		ssHealth << "HP: " << player.GetHealth();
+		healthText.setString(ssHealth.str());
 		break;
 
 	case Game::State::PAUSED:
@@ -340,15 +468,28 @@ void Game::render()
 		}
 
 		mWindow.draw(crosshairSprite);
+
+		//Draw all UI Stuff
+		mWindow.setView(hudView);
+		mWindow.draw(scoreText);
+		mWindow.draw(ammoText);
+		mWindow.draw(healthText);
 		break;
 
 	case Game::State::PAUSED:
+		mWindow.draw(pauseText);
 		break;
 
 	case Game::State::LEVELING_UP:
+		mWindow.setView(hudView);
+		mWindow.draw(uiBackground);
+		mWindow.draw(levelupText);
 		break;
 
 	case Game::State::GAME_OVER:
+		mWindow.setView(hudView);
+		mWindow.draw(uiBackground);
+		mWindow.draw(gameOverText);
 		break;
 
 	default:
@@ -429,21 +570,46 @@ void Game::LoadMenu()
 	Debug::Log("Loaded Menu: " + to_string(gameTimeTotal.asSeconds()));
 }
 
-void Game::WaveUp()
+void Game::LoadGameOver()
 {
+	gameOverText.setString(gameOverText.getString() + "\n Your Score: " + to_string(score));
+	score = 0;
+	player.Reset();
+	Arrow::Reset();
+	wave = 0;
+	gameTimeTotal = Time::Zero;
+	uiBackground.setTexture(menuBackground);
+	state = State::GAME_OVER;
+	gameTimeTotal += clock.restart();
+}
+
+void Game::LoadLevelUp()
+{
+	uiSFX.loadFromFile("sound/levelup.wav");
+	uiSound.setBuffer(uiSFX);
+	uiSound.play();
+	uiBackground.setTexture(menuBackground);
+	state = State::LEVELING_UP;
+	gameTimeTotal += clock.restart();
+}
+
+void Game::WaveUp()
+{	
 	wave++;
-	arena.width = 768 * wave;
-	arena.height = 768 * wave;
+	arena.width = 640 + wave * 128;
+	arena.height = 640 + wave * 128;
 	arena.left = 0;
 	arena.top = 0;
+	Debug::Log(to_string(wave));
 	int tileSize = createBackground(background, arena);
 
 	player.Spawn(arena, resolution, tileSize);
-	enemiesCount = 5 * wave;
+	enemiesCount = 5 * wave * 1.5;
 	delete[] Enemies;
 	Enemies = createHorde(enemiesCount, arena);
 	enemiesAliveCount = enemiesCount;
-	pickups[enemiesCount];
+	pickups.resize(enemiesCount * 2);
+	currentPickup = 0;
 	clock.restart();
 }
 

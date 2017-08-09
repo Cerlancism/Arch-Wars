@@ -5,8 +5,8 @@ class Enemy : public GameObject
 private:
 	// How fast is each Enemy type?
 	const float SLIME_SPEED = 80;
-	const float MUSHROOM_SPEED = 40;
-	const float STUMP_SPEED = 10;
+	const float MUSHROOM_SPEED = 50;
+	const float STUMP_SPEED = 30;
 
 	// How tough is each Enemy type
 	const float SLIME_HEALTH = 3;

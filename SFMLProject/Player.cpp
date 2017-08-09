@@ -10,6 +10,7 @@ Player::Player()
 	CenterOrigin();
 	Collider.Bounds = SpriteSource.getGlobalBounds();
 	Collider.Layer = BoxCollider::CollisionLayer::PLAYER;
+	shootSFX.loadFromFile("sound/shoot.wav");
 }
 
 
@@ -21,9 +22,35 @@ void Player::Update()
 	Turn();
 }
 
+void Player::UpgradeSpeed()
+{
+	speed *= 1.1f;
+}
+
+void Player::UpgradeHealth()
+{
+	health += 50;
+	maxHealth += 50;
+}
+
+void Player::Reset()
+{
+	health = DEFAULTHEALTH;
+	maxHealth = DEFAULTHEALTH;
+	speed = startSpeed;
+}
+
 bool Player::SetHealth(float hp)
 {
 	health += hp;
+	if (health <= 0)
+	{
+		return true;
+	}
+	if (health > maxHealth)
+	{
+		health = maxHealth;
+	}
 	return false;
 }
 
@@ -82,4 +109,10 @@ void Player::Turn()
 		Mouse::getPosition().x - m_Resolution.x / 2)
 		* 180) / 3.141;
 	SpriteSource.setRotation(angle);
+}
+
+void Player::PlayShoot()
+{
+	SoundPlayer.setBuffer(shootSFX);
+	SoundPlayer.play();
 }

@@ -6,6 +6,7 @@ private:
 	int colliderID;
 
 public:
+	//TODO more advanced collision management using layers
 	enum class CollisionLayer{ PLAYER, ARROW, ENEMY, PICKUPS, NONE };
 	CollisionLayer Layer;
 	FloatRect Bounds;

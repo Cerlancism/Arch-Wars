@@ -3,6 +3,7 @@
 
 class GameObject
 {
+	//Base class for main game objects such as player, enemy and pickups
 protected:
 	Transform transformer;
 
