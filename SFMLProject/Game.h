@@ -1,5 +1,8 @@
 #include "stdafx.h"
-#include <iostream>
+#include "Player.h"
+#include "Arrow.h"
+#include "Enemy.h"
+#include "PickUp.h"
 #pragma once
 
 class Game
@@ -60,13 +63,29 @@ private:
 
 	//Gameplay
 	int wave = 0;
+	Player player;
+	//Arrows
+	Arrow arrows[ALLARROWS];
+	int currentArrow = 0;
+	int arrowsSpare = 10000;
+	int arrowsInQuiver = 600;
+	int quiverSize = 600;
+	//Enemies
+	int enemiesCount;
+	int enemiesAliveCount;
+	Enemy *Enemies = NULL;
+	//Pickup
+	PickUp pickups[10];
+	int currentPickup = 0;
+
 
 public:
 	//Set the screen size and fullscreen mode and framerate
-	Game(int sizeX, int sizeY, String title, Uint32 style, Uint32 framerate);
+	Game(int sizeX, int sizeY, String title, Uint32 style, Uint32 framerate, Uint32 offsetY);
 	~Game();
 	void run();// to start the game
-	static void DebugLog(string log); //debug logging
+	static float deltaTime;
+
 
 private:
 	// Event Handling
@@ -81,6 +100,8 @@ private:
 	void LoadMenu();
 
 	void WaveUp();
+
+	Enemy* createHorde(int enemiescount, IntRect arena);
 
 };
 

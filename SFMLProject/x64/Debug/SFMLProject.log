@@ -1,7 +1,5 @@
-﻿  GameObject.cpp
-  Generating Code...
-  Skipping... (no relevant changes detected)
-  Main.cpp
-  Game.cpp
+﻿  Player.cpp
+d:\s_che\documents\acadmic sp\gprg\arch-wars\sfmlproject\player.cpp(38): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\s_che\documents\acadmic sp\gprg\arch-wars\sfmlproject\player.cpp(83): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   SFMLProject.vcxproj -> D:\s_che\Documents\Acadmic SP\GPRG\Arch-Wars\x64\Debug\Arch Wars.exe
   SFMLProject.vcxproj -> D:\s_che\Documents\Acadmic SP\GPRG\Arch-Wars\x64\Debug\Arch Wars.pdb (Partial PDB)

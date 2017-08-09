@@ -12,10 +12,14 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+#include "Debug.h"
 #include "TextureHolder.h"
 
 using namespace sf;
 using namespace std;
+
+#define ALLARROWS 100
+
 
 
 

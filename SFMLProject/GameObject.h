@@ -1,21 +1,23 @@
 #pragma once
-#include "AudioSource.h"
 #include "BoxCollider.h"
 
 class GameObject
 {
 protected:
-	Vector2f position;
+	Transform transformer;
 
 public:
-	AudioSource audio;
-	BoxCollider collider;
-	Sprite sprite;
+	Sound SoundPlayer;
+	BoxCollider Collider;
+	Sprite SpriteSource;
 
 	GameObject();
 	~GameObject();
 
+	Vector2f GetPosition();
+	void SetPosition(Vector2f pos);
+	void SetPosition(float x, float y);
+	void CenterOrigin();
 	virtual void Update();
-
 };
 
